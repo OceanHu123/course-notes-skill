@@ -1,6 +1,6 @@
 ---
 name: course-notes
-description: Summarize and explain Canvas/Ed course material (lecture PDFs, lessons, slides) into structured study notes. Use when asked to summarize or explain a week, lab, slide, or assignment. Not for non-course documents.
+description: Summarize and explain Canvas/Ed course material (lecture PDFs, lessons, slides) into structured study notes for Trae, Cursor, and other Agent Skill hosts. Use when asked to summarize or explain a week, lab, slide, or assignment. Not for non-course documents.
 ---
 
 # Course Notes

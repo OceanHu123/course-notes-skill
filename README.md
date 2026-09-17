@@ -1,10 +1,32 @@
 # course-notes
 
-一个给 **Trae** 用的 skill：把 Canvas / Ed 上的课程材料（lecture PDF、lesson、slide）整理成结构化学习笔记。
+**把 Canvas / Ed 课件变成可复习的结构化笔记** — 给 Trae、Cursor 等 Agent Skill 宿主用。
 
-不是又一个 PDF 摘要工具 —— 它把「材料在哪、怎么取、图片怎么读、笔记什么格式、临时文件什么时候删」这一整套流程固化下来，下次直接说 "wk7 总结" 就行。
+不是又一个 PDF 摘要工具：它把「材料在哪 → 怎么取 → 图片怎么 OCR → 笔记什么格式 → 临时文件何时删」整条链路固化下来。装好后直接说 `wk7 总结`。
 
-## 它能做什么
+[示例笔记](examples/notes/COMPXXXX-wk3-processes.md) · [MIT License](LICENSE)
+
+---
+
+## 30 秒看懂
+
+| 你给什么 | 你得到什么 |
+|---|---|
+| 一句 `INFO1112 wk5 总结`（或拖一个 PDF） | 总览 → 分部分（带页码）→ 对比表 → 速查 → 易混点 → 和作业的关联 |
+| 纯示意图页 | 标注「此页为图，未读」，**不编造** |
+| 临时 PDF / png | 读完即删，笔记只落在 `~/notes/` |
+
+**Before → After**（完整样例见 [`examples/`](examples/)）
+
+```
+Before:  48 页 lecture PDF + 一堆 Ed slides，考前从头翻
+After:   ~/notes/COMPXXXX/wk3.md
+         - process vs thread 对比表
+         - 速查表 + 易混点
+         - 未读图页清单（p.12）
+```
+
+## 四种模式
 
 | 模式 | 触发说法 | 产出 |
 |---|---|---|
@@ -12,8 +34,6 @@
 | **explain** | `explain <slide 链接>` | 逐页 / 逐 slide 详解 |
 | **answer** | `回答每个问题并解释代码` | 逐题作答 + 代码逐行解释 |
 | **quiz** | `出题考我` | 自测题 + 答案 |
-
-笔记固定包含：总览 → 分部分详解（带页码）→ 对比表格 → 速查表 → 易混点 → 与作业/考试的关联 → 未读图页清单。
 
 ## 上手（最多 3 步）
 
@@ -35,7 +55,18 @@
 
 ```bash
 git clone https://github.com/OceanHu123/course-notes-skill.git ~/Projects/course-notes-skill
+```
 
+把仓库里的 `course-notes/` 目录接到你的 skills 路径（软链或复制均可）：
+
+| 宿主 | Skills 目录 | 示例 |
+|---|---|---|
+| **Trae CN** | `~/.trae-cn/skills/` | `ln -s ~/Projects/course-notes-skill/course-notes ~/.trae-cn/skills/course-notes` |
+| **Trae 国际版** | `~/.trae/skills/` | 同上，改路径 |
+| **Cursor** | `~/.cursor/skills/`（或项目内 `.cursor/skills/`） | `ln -s ~/Projects/course-notes-skill/course-notes ~/.cursor/skills/course-notes` |
+| **其他 Agent Skills 宿主** | 以该产品文档为准 | 目录内需有 `SKILL.md` |
+
+```bash
 # 方式一：软链接（改仓库即时生效）
 ln -s ~/Projects/course-notes-skill/course-notes ~/.trae-cn/skills/course-notes
 
@@ -43,12 +74,7 @@ ln -s ~/Projects/course-notes-skill/course-notes ~/.trae-cn/skills/course-notes
 cp -R ~/Projects/course-notes-skill/course-notes ~/.trae-cn/skills/
 ```
 
-路径说明：
-
-- **Trae CN** → `~/.trae-cn/skills/`
-- **Trae 国际版** → `~/.trae/skills/`
-
-装好后重启 Trae，skill 会自动被识别（`SKILL.md` 的 `description` 就是触发器）。软链接没被识别的话换成方式二。
+装好后重启 IDE / Agent。`SKILL.md` 的 `description` 就是触发器。软链接没被识别就换方式二。
 
 ### 第 2 步（可选）：配 token
 
@@ -64,7 +90,7 @@ cp -R ~/Projects/course-notes-skill/course-notes ~/.trae-cn/skills/
 - Canvas → [vishalsachdev/canvas-mcp](https://github.com/vishalsachdev/canvas-mcp)
 - Ed → [januarharianto/ed-mcp](https://github.com/januarharianto/ed-mcp)
 
-各自把 token 写进自己仓库的 `.env`，然后在 Trae 里注册（`~/Library/Application Support/Trae CN/User/mcp.json`）：
+各自把 token 写进自己仓库的 `.env`，然后在 IDE 里注册 MCP（Trae 示例：`~/Library/Application Support/Trae CN/User/mcp.json`）：
 
 ```json
 {
@@ -83,7 +109,7 @@ skill 默认去 `~/Projects/mcp/{canvas-mcp,ed-mcp}/.env` 读凭据；路径不�
 python3 ~/.trae-cn/skills/course-notes/scripts/check_env.py
 ```
 
-它会告诉你现在是 Tier 几，以及哪一侧还缺。
+（Cursor 用户把路径换成 `~/.cursor/skills/course-notes/...`。）它会告诉你现在是 Tier 几，以及哪一侧还缺。
 
 ### 第 3 步：直接用
 
@@ -109,7 +135,7 @@ https://edstem.org/au/courses/36385/lessons/109426/slides/809827 回答每个问
 
 **索引是缓存，不是前置条件。** 新用户一个 id 都不用填 —— 直接说 `INFO1112 wk5 总结`，skill 会先在**你自己账号的** Canvas / Ed 课表里匹配，再把结果写进索引，下次就不用再查了。
 
-索引在 [`course-notes/references/material-index.md`](course-notes/references/material-index.md)，只存 id，不存课程内容。仓库里附带了一份 **INFO1112（USYD）** 的现成样例：Canvas course `73745`、Ed course `36385`、Week 1–7 全部 lecture PDF 的 file id、12 个 lesson id。
+索引在 [`course-notes/references/material-index.md`](course-notes/references/material-index.md)，只存 id，不存课程内容。仓库里附带了一份 **INFO1112（USYD）** 的 index 样例作参考；真实 id 以你账号为准，学校无关课程请用下面的 `discover_course.py` 生成。
 
 加一门课不用手填，跑一条命令，输出可直接粘贴：
 
@@ -161,8 +187,11 @@ check_env ──► 解析课程 ──► 找材料 ──► 抽文字 ──�
 
 ```
 course-notes-skill/
+├── LICENSE
 ├── README.md
-└── course-notes/              ← 这个目录就是要装进 skills/ 的 skill
+├── examples/                  ← 匿名样例笔记（给路过的人看产出长什么样）
+│   └── notes/
+└── course-notes/              ← 装进 skills/ 的就是这个目录
     ├── SKILL.md
     ├── references/
     │   └── material-index.md
@@ -182,3 +211,7 @@ course-notes-skill/
 - **扫描版 PDF**：整本都没有文字层，会被全部报成图片页，只能整页 OCR，慢且容易出错。
 - **Canvas 权限**：不同课程的 API 开放程度不一样，`403/404` 是常见情况，走 module 路线更稳。
 - **Ed 会拦没有 `User-Agent` 的请求**（返回 403），脚本里已经带上。
+
+## License
+
+[MIT](LICENSE)
