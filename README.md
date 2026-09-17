@@ -1,117 +1,113 @@
 # course-notes
 
-**把 Canvas / Ed 课件变成可复习的结构化笔记** — 给 Trae、Cursor 等 Agent Skill 宿主用。
+**Turn Canvas / Ed course material into structured study notes** — an Agent Skill for Trae, Cursor, and similar hosts.
 
-不是又一个 PDF 摘要工具：它把「材料在哪 → 怎么取 → 图片怎么 OCR → 笔记什么格式 → 临时文件何时删」整条链路固化下来。装好后直接说 `wk7 总结`。
+Not another PDF summarizer. It locks in the full loop: find material → fetch → OCR image pages → fixed note template → delete temp files. After install, just say `wk7 总结` / `summarize week 7`.
 
-[示例笔记](examples/notes/COMPXXXX-wk3-processes.md) · [MIT License](LICENSE)
+[English demo notes](examples/demo/after-notes.md) · [中文说明](README.zh-CN.md) · [MIT License](LICENSE)
 
 ---
 
-## 30 秒看懂
+## 30-second pitch
 
-| 你给什么 | 你得到什么 |
+| You give | You get |
 |---|---|
-| 一句 `INFO1112 wk5 总结`（或拖一个 PDF） | 总览 → 分部分（带页码）→ 对比表 → 速查 → 易混点 → 和作业的关联 |
-| 纯示意图页 | 标注「此页为图，未读」，**不编造** |
-| 临时 PDF / png | 读完即删，笔记只落在 `~/notes/` |
+| `INFO1112 wk5 总结` (or drop a PDF) | Overview → sectioned notes with page ids → comparison tables → cheat sheet → exam traps → homework links |
+| Pure diagram pages | Marked **unread** — **never invented** |
+| Temp PDF / png | Deleted after read; notes only under `~/notes/` |
 
-**Before → After**（完整样例见 [`examples/`](examples/)）
+**Before → After** (real Tier-0 run on [OSTEP Ch.4](https://pages.cs.wisc.edu/~remzi/OSTEP/cpu-intro.pdf) — denser textbook left, structured notes right):
 
-```
-Before:  48 页 lecture PDF + 一堆 Ed slides，考前从头翻
-After:   ~/notes/COMPXXXX/wk3.md
-         - process vs thread 对比表
-         - 速查表 + 易混点
-         - 未读图页清单（p.12）
-```
+![Before: OSTEP PDF · After: course-notes output](examples/demo/before-after.jpg)
 
-## 四种模式
+Full notes: [`examples/demo/after-notes.md`](examples/demo/after-notes.md) · how to reproduce: [`examples/demo/`](examples/demo/)
 
-| 模式 | 触发说法 | 产出 |
+## Modes
+
+| Mode | Trigger | Output |
 |---|---|---|
-| **summary** | `wk5 总结` / `总结 Lab 6` | 该周课件的结构化笔记 |
-| **explain** | `explain <slide 链接>` | 逐页 / 逐 slide 详解 |
-| **answer** | `回答每个问题并解释代码` | 逐题作答 + 代码逐行解释 |
-| **quiz** | `出题考我` | 自测题 + 答案 |
+| **summary** | `wk5 总结` / `summarize Lab 6` | Structured notes for that week |
+| **explain** | `explain <slide URL>` | Page / slide walkthrough |
+| **answer** | `回答每个问题并解释代码` | Per-question answers + line-by-line code |
+| **quiz** | `出题考我` / `quiz me` | Practice questions + answers |
 
-## 上手（最多 3 步）
+## Setup (≤ 3 steps)
 
 ```
-第 1 步（必须）装 skill  ──►  立刻可用：给个 PDF 就能出笔记
-第 2 步（可选）配 token  ──►  能自动抓课件
-第 3 步        直接说话  ──►  "INFO1112 wk5 总结"
+Step 1 (required) install skill  →  works immediately on a dropped PDF
+Step 2 (optional) add tokens     →  auto-fetch from Canvas / Ed
+Step 3            just talk      →  "INFO1112 wk5 总结"
 ```
 
-| Tier | 你要做什么 | 能得到什么 |
+| Tier | What you do | What you get |
 |---|---|---|
-| **Tier 0** 本地模式 | 只装 skill | 总结 / 讲解 / 答题 —— 材料自己给（拖 PDF、贴截图） |
-| **Tier 1** 半自动 | 再配 Canvas **或** Ed 其中一个 token | 自动抓那一侧的材料 |
-| **Tier 2** 全自动 | 两个 token 都配 | 课程自动发现 + 材料自动抓取 + 出笔记 |
+| **Tier 0** local | Install skill only | Summarize / explain / answer from files you provide |
+| **Tier 1** half-auto | Canvas **or** Ed token | Auto-fetch that side |
+| **Tier 2** full-auto | Both tokens | Course discovery + fetch + notes |
 
-**Tier 0 是真能用的**：结构化笔记、图片 OCR、临时文件清理全都不依赖 token。所以第 1 步做完就有价值。
+**Tier 0 is real:** structured notes, OCR, and temp cleanup need no tokens.
 
-### 第 1 步：装 skill（必须）
+### Step 1 — Install the skill
 
 ```bash
 git clone https://github.com/OceanHu123/course-notes-skill.git ~/Projects/course-notes-skill
 ```
 
-把仓库里的 `course-notes/` 目录接到你的 skills 路径（软链或复制均可）：
+Link or copy the `course-notes/` folder into your skills path:
 
-| 宿主 | Skills 目录 | 示例 |
+| Host | Skills directory | Example |
 |---|---|---|
 | **Trae CN** | `~/.trae-cn/skills/` | `ln -s ~/Projects/course-notes-skill/course-notes ~/.trae-cn/skills/course-notes` |
-| **Trae 国际版** | `~/.trae/skills/` | 同上，改路径 |
-| **Cursor** | `~/.cursor/skills/`（或项目内 `.cursor/skills/`） | `ln -s ~/Projects/course-notes-skill/course-notes ~/.cursor/skills/course-notes` |
-| **其他 Agent Skills 宿主** | 以该产品文档为准 | 目录内需有 `SKILL.md` |
+| **Trae** | `~/.trae/skills/` | same, different path |
+| **Cursor** | `~/.cursor/skills/` (or project `.cursor/skills/`) | `ln -s ~/Projects/course-notes-skill/course-notes ~/.cursor/skills/course-notes` |
+| **Other Agent Skill hosts** | see product docs | folder must contain `SKILL.md` |
 
 ```bash
-# 方式一：软链接（改仓库即时生效）
+# symlink (live updates from the repo)
 ln -s ~/Projects/course-notes-skill/course-notes ~/.trae-cn/skills/course-notes
 
-# 方式二：直接复制（最稳，和仓库解耦）
+# or copy (decoupled)
 cp -R ~/Projects/course-notes-skill/course-notes ~/.trae-cn/skills/
 ```
 
-装好后重启 IDE / Agent。`SKILL.md` 的 `description` 就是触发器。软链接没被识别就换方式二。
+Restart the IDE / agent. The `description` in `SKILL.md` is the trigger. If a symlink is ignored, use copy.
 
-### 第 2 步（可选）：配 token
+### Step 2 (optional) — Tokens
 
-凭据**不放在 skill 里**（所以这个仓库可以公开），而是交给两个 MCP 服务器：
+Credentials stay in MCP servers (not in this skill), so the repo can stay public:
 
-| 想要什么 | 需要什么 | 从哪拿 |
+| Goal | Need | Where |
 |---|---|---|
-| Canvas 课表 / 课件 PDF | `CANVAS_API_URL` + `CANVAS_API_TOKEN` | Canvas → Account → Settings → **+ New Access Token**。URL 形如 `https://<你学校>.instructure.com/api/v1` |
-| Ed lessons / slides | `ED_API_TOKEN` | 见 [ed-mcp](https://github.com/januarharianto/ed-mcp) 的 README |
+| Canvas modules / lecture PDFs | `CANVAS_API_URL` + `CANVAS_API_TOKEN` | Canvas → Account → Settings → **+ New Access Token**. URL like `https://<school>.instructure.com/api/v1` |
+| Ed lessons / slides | `ED_API_TOKEN` | see [ed-mcp](https://github.com/januarharianto/ed-mcp) |
 
-两个服务器都是公开项目：
+MCP projects:
 
 - Canvas → [vishalsachdev/canvas-mcp](https://github.com/vishalsachdev/canvas-mcp)
 - Ed → [januarharianto/ed-mcp](https://github.com/januarharianto/ed-mcp)
 
-各自把 token 写进自己仓库的 `.env`，然后在 IDE 里注册 MCP（Trae 示例：`~/Library/Application Support/Trae CN/User/mcp.json`）：
+Put tokens in each project's `.env`, register MCP in your IDE (Trae example: `~/Library/Application Support/Trae CN/User/mcp.json`):
 
 ```json
 {
   "mcpServers": {
-    "canvas": { "command": "/绝对路径/run-canvas-mcp.sh", "args": [], "env": {} },
-    "ed":     { "command": "/绝对路径/run-ed-mcp.sh",     "args": [], "env": {} }
+    "canvas": { "command": "/absolute/path/run-canvas-mcp.sh", "args": [], "env": {} },
+    "ed":     { "command": "/absolute/path/run-ed-mcp.sh",     "args": [], "env": {} }
   }
 }
 ```
 
-skill 默认去 `~/Projects/mcp/{canvas-mcp,ed-mcp}/.env` 读凭据；路径不一样就设 `MCP_DIR`，别改代码。
+Default credential paths: `~/Projects/mcp/{canvas-mcp,ed-mcp}/.env`. Override with `MCP_DIR` — do not edit the skill.
 
-**验证配好了没**（顺便列出你账号里的所有课程）：
+**Sanity check** (also lists courses on your account):
 
 ```bash
 python3 ~/.trae-cn/skills/course-notes/scripts/check_env.py
 ```
 
-（Cursor 用户把路径换成 `~/.cursor/skills/course-notes/...`。）它会告诉你现在是 Tier 几，以及哪一侧还缺。
+(Cursor: `~/.cursor/skills/course-notes/...`.) Prints your Tier and what is missing.
 
-### 第 3 步：直接用
+### Step 3 — Use it
 
 ```
 INFO1112 wk5 总结
@@ -121,97 +117,60 @@ https://edstem.org/au/courses/36385/lessons/109426/slides/809827 回答每个问
 出题考我 Week 5 的内容
 ```
 
-笔记会落到 `~/notes/<course-code>/<topic>.md`（**项目外独立目录**，不污染你的代码仓库）；`/tmp` 下的 PDF、提取的 txt、渲染的 png 用完即删。
+Notes land in `~/notes/<course-code>/<topic>.md` (outside your code repos). Temp files under `/tmp` are deleted after use.
 
-## 依赖
+## Dependencies
 
-| 用途 | 要求 |
+| Use | Requirement |
 |---|---|
-| 读 PDF | `python3` + **PyMuPDF**（`import fitz`）。macOS 自带 python3 通常已有；没有就 `python3 -m pip install --user pymupdf` |
-| OCR 图片页 | 优先级：**tesseract**（装了就用）→ **macOS Vision**（自带 `swiftc` 即可，零安装）→ 都没有则标注"此页为图，未读" |
-| 自动取材料（可选） | Canvas / Ed 的 MCP 服务器 + token，见第 2 步 |
+| Read PDF | `python3` + **PyMuPDF** (`import fitz`). `python3 -m pip install --user pymupdf` if needed |
+| OCR image pages | **tesseract** if present → else **macOS Vision** (`swiftc`) → else mark unread |
+| Auto-fetch (optional) | Canvas / Ed MCP + tokens |
 
-## 让它认识你的课程
+## Teaching the skill your courses
 
-**索引是缓存，不是前置条件。** 新用户一个 id 都不用填 —— 直接说 `INFO1112 wk5 总结`，skill 会先在**你自己账号的** Canvas / Ed 课表里匹配，再把结果写进索引，下次就不用再查了。
+The material index is a **cache, not a prerequisite**. Say `INFO1112 wk5 总结`; the skill matches against **your** Canvas / Ed enrollments and appends the index.
 
-索引在 [`course-notes/references/material-index.md`](course-notes/references/material-index.md)，只存 id，不存课程内容。仓库里附带了一份 **INFO1112（USYD）** 的 index 样例作参考；真实 id 以你账号为准，学校无关课程请用下面的 `discover_course.py` 生成。
-
-加一门课不用手填，跑一条命令，输出可直接粘贴：
+Index file: [`course-notes/references/material-index.md`](course-notes/references/material-index.md) (ids only). A USYD INFO1112 sample is included for reference — your ids come from your account.
 
 ```bash
 python3 ~/.trae-cn/skills/course-notes/scripts/discover_course.py <COURSE-CODE>
 ```
 
-```markdown
-## INFO1112 - INFO1112 Computing 1B OS and Network Platforms
+Prints a paste-ready Markdown block. Course codes do **not** encode the school; school comes from the platform (`realm` / Canvas host). No match → say so; never invent ids.
 
-# school: University of Sydney (Ed realm)
-- Canvas course id: 73745
-- Ed course id: 36385
-
-### Lectures (Canvas modules -> PDFs)
-
-| Week | File | Canvas file id |
-|---|---|---|
-| 5 | Week-5.pdf | 52239164 |
-
-### Ed lessons
-
-| Module | Lesson | Ed lesson id | Slides |
-|---|---|---|---|
-| + Labs | Lab 5: Processes and Memory | 109426 | 12 |
-```
-
-> 课程代码本身**不含学校信息** —— `INFO1112` 只在**你的账号**里有意义。学校由平台给出（Ed 的 `realm`、Canvas 实例的域名），skill 不会从代码去猜；匹配不到就明说，不编 id。
-
-## 工作原理
+## How it works
 
 ```
-check_env ──► 解析课程 ──► 找材料 ──► 抽文字 ──► OCR 图片页 ──► 写笔记 ──► 清理
+check_env → resolve course → fetch → extract text → OCR → write notes → cleanup
 ```
 
-1. **`scripts/check_env.py`**：探当前处于哪个 Tier，列出账号里实际可见的课程
-2. **`scripts/discover_course.py`**：课程代码 → Canvas/Ed id + 周次文件表 + lesson 表，输出可粘贴的索引段落
-3. **找材料**
-   - **Ed lessons/slides**：Ed MCP 没有 lesson/slide 接口，直接调 `/courses/{id}/lessons` 和 `/lessons/{id}`（能拿到 slide 全文和 `file_url`）
-   - **Canvas PDF**：`get_course_structure` 找 module item 的 `content_id` → `download_course_file`（`list_course_files` / `list_pages` 对某些课程会 403/404）
-4. **抽文字**：`scripts/fetch_material.py` 按页输出，并**列出没有文字的页**（OCR 工作清单）
-5. **OCR**：`scripts/ocr_pages.py` 渲染指定页并识别；`scripts/ocr.swift` 是 macOS Vision 的实现，首次运行编译并缓存到 `~/.cache/course-notes/`
-6. **写笔记**：按固定模板，中文讲解 + 技术术语保留英文原词（container / process / image / branch…），每条要点带页码或 slide id
-7. **清理**：`/tmp` 下的一次性文件全部删掉
+See [`README.zh-CN.md`](README.zh-CN.md) for the detailed Chinese walkthrough of each script, or browse `course-notes/scripts/`.
 
-`scripts/_common.py` 是共用的凭据定位与 API 封装。它只**读** MCP 的 `.env`，自己从不存 token；环境变量优先，所以可以用 `MCP_DIR` / `CANVAS_ENV` / `ED_ENV` 指向别处。
-
-## 目录结构
+## Layout
 
 ```
 course-notes-skill/
 ├── LICENSE
-├── README.md
-├── examples/                  ← 匿名样例笔记（给路过的人看产出长什么样）
-│   └── notes/
-└── course-notes/              ← 装进 skills/ 的就是这个目录
+├── README.md                 ← you are here (English)
+├── README.zh-CN.md
+├── examples/
+│   ├── demo/                 ← OSTEP before/after for screenshots
+│   └── notes/                ← extra anonymized sample
+└── course-notes/             ← install this folder into skills/
     ├── SKILL.md
     ├── references/
-    │   └── material-index.md
     └── scripts/
-        ├── _common.py          # 凭据定位 + Canvas/Ed API 封装
-        ├── check_env.py        # 自检：Tier 判定 + 列出账号课程
-        ├── discover_course.py  # 课程代码 → 可粘贴的索引段落
-        ├── fetch_material.py   # PDF → 按页文字 + 图片页清单
-        ├── ocr_pages.py        # 指定页 OCR
-        └── ocr.swift           # macOS Vision OCR
 ```
 
-## 已知限制
+## Limits
 
-- **只认你自己账号里的课**：skill 没有全局课程库，匹配范围就是你的 Canvas / Ed 选课列表。
-- **纯示意图读不了**：折线图、拓扑图这类 OCR 出来是零散文字。终端截图、文字型 slide 效果很好。遇到读不了的图会明确标注"此页为图，未读"，**不会编造内容**。
-- **扫描版 PDF**：整本都没有文字层，会被全部报成图片页，只能整页 OCR，慢且容易出错。
-- **Canvas 权限**：不同课程的 API 开放程度不一样，`403/404` 是常见情况，走 module 路线更稳。
-- **Ed 会拦没有 `User-Agent` 的请求**（返回 403），脚本里已经带上。
+- Only courses on **your** account (no global catalog).
+- Pure diagrams: OCR is weak; skill marks unread instead of guessing.
+- Fully scanned PDFs → all pages image-only; OCR is slow and noisy.
+- Canvas API coverage varies (`403/404` common); module → `download_course_file` is the reliable path.
+- Ed rejects requests without `User-Agent` (scripts already set one).
 
 ## License
 
-[MIT](LICENSE)
+[MIT](LICENSE). Demo PDF is from OSTEP (not redistributed in git) — https://pages.cs.wisc.edu/~remzi/OSTEP/
